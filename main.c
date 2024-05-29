@@ -68,8 +68,6 @@ int main()
     int i;
     for(i=1;i<=10;i++)
     {
-        printf("_______________________\n");
-        printf("for %d :\n",i);
         void * cur_head=heap_alloc(i);
         if(cur_head==NULL)
         {

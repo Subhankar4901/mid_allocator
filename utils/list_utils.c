@@ -39,20 +39,12 @@ void * heap_chunk_insert(HeapChunk_List*list,HeapChunk*ptr)
 {
     if(list->len==HEAP_CHUNK_CAP)
       return NULL;
-    // if(list->len==0)
-    // {
-    //     list->Heap_Chunks[0]=*ptr;
-    //     list->len+=1;
-    //     return ptr;
-    // }
     int idx=insert_pos(list,ptr->start);
-    printf("%d\n",idx);
     for(size_t i=list->len;i>idx;i--)
     {
         list->Heap_Chunks[i]=list->Heap_Chunks[i-1];
     }
     list->Heap_Chunks[idx]=*ptr;
-    printf("Size of %zu inserted at idx %d\n",ptr->size,idx);
     list->len+=1;
     return ptr;
 
