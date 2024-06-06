@@ -1,9 +1,17 @@
 #include<stdio.h>
 #include "utils.h"
+void heap_chunk_dump(HeapChunk_List * list)
+{
+    printf("Chunks(%zu) :\n",list->len);
+     for(size_t i=0;i<list->len;i++)
+    {
+        printf("Chunk of Size : %zu is at location : %p\n",list->Heap_Chunks[i].size,list->Heap_Chunks[i].start);
+    }   
+}
 int heap_chunk_query(HeapChunk_List*list,void*ptr)
 {
     int lo=0;
-    int hi=list->len-1;
+    int hi=list->len;
     while(lo<=hi)
     {
         int mid=(hi+lo)/2;
@@ -35,7 +43,7 @@ void * heap_chunk_insert(HeapChunk_List*list,HeapChunk*ptr)
     return ptr;
 
 }
-HeapChunk heap_chunk_remove(HeapChunk_List*list,void*ptr)
+HeapChunk heap_chunk_remove(HeapChunk_List*list,void*ptr,int index)
 {
     HeapChunk res={0};
     if(list->len==0)
@@ -43,7 +51,11 @@ HeapChunk heap_chunk_remove(HeapChunk_List*list,void*ptr)
     printf("Allocated chunks list is empty.\n");
     return res;
     }
-    int idx=heap_chunk_query(list,ptr);
+    int idx;
+    if(index!=-1)
+        idx=index;
+    else
+        idx=heap_chunk_query(list,ptr);
     if(idx==-1)
     {
     printf("Chunk is not allocated.\n");
@@ -61,4 +73,26 @@ HeapChunk heap_chunk_remove(HeapChunk_List*list,void*ptr)
     list->len-=1;
     return res;
 
+}
+bool merge_consecutive(HeapChunk_List*list,int i,int j)
+{
+    if(i>=list->len || j>=list->len)
+    return false;
+    if(list->Heap_Chunks[j].start==list->Heap_Chunks[i].start+list->Heap_Chunks[i].size)
+    {
+        list->Heap_Chunks[i].size+=list->Heap_Chunks[j].size;
+        HeapChunk remove_res= heap_chunk_remove(list,list->Heap_Chunks[j].start,j);
+        if(remove_res.start==NULL)
+        return false;
+        return true;
+    }
+    return false;
+}
+void merge_freed_chunks(HeapChunk_List*list)
+{
+    for(size_t i =0;i<list->len;i++)
+    {
+        while(merge_consecutive(list,i,i+1))
+        continue;
+    }
 }
