@@ -1,5 +1,6 @@
 # Custom Memory Allocator
 This project implements a simple custom memory allocator in C, providing three primary functions for memory management: initializing the allocator, allocating memory on the heap, and freeing allocated memory.
+<br>
 For without Garbage Collection Version : [3d54d4db42eb03cf23c1d0346d81fa2514ed869d](https://github.com/Subhankar4901/mid_allocator/tree/3d54d4db42eb03cf23c1d0346d81fa2514ed869d)
 ## Functions
 
@@ -35,3 +36,10 @@ To run the test cases:
 ```bash
 make test
 ./test
+```
+## Usage
+Write your code in main.c,then run:
+```bash
+make
+./run
+```
