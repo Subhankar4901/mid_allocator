@@ -23,6 +23,8 @@ void init_allocator()
     };
         Freed_Heap_Chunks.Heap_Chunks[0]=free_chunk;
         Freed_Heap_Chunks.len=1;
+
+    LOG(INFO,"Allocator has been initialized.");
 }
 void * heap_alloc(size_t size)
 {
@@ -37,8 +39,8 @@ void * heap_alloc(size_t size)
             HeapChunk remove_res= heap_chunk_remove(&Freed_Heap_Chunks,cur_chunk.start,-1);
             if(remove_res.start==NULL && remove_res.size==0)
             {
-                printf("Failed to remove the available chunk.");
-                POSITION;
+                LOG_SYS(ERROR,"Failed to remove a free chunk from available chunks.");
+                LOG(ERROR,ALLOC_ERR_MSG);
                 return NULL;
             }
             HeapChunk required_chunk={
@@ -54,25 +56,32 @@ void * heap_alloc(size_t size)
             void * _tail_insertion_res_= heap_chunk_insert(&Freed_Heap_Chunks,&tail_chunk);
             if(_tail_insertion_res_==NULL)
             {
-                POSITION;
-                printf("Failed to insert the tailed chunk.");
+                LOG_SYS(ERROR,"Failed to insert the tailing chunk (after removing the required chunk) back to Free chunk list.");
+                LOG(ERROR,ALLOC_ERR_MSG);
                 return NULL;
             }
+            }
+            if(Allocated_Heap_Chunks.len==HEAP_CHUNK_CAP)
+            {
+
+                LOG_SYS(ERROR,"Allocated heap chunk lists capacity had been hit.");
+                LOG(ERROR,ALLOC_ERR_MSG);
+                return NULL;
             }
             HeapChunk * res_chunk=heap_chunk_insert(&Allocated_Heap_Chunks,&required_chunk);
             if (res_chunk)
             return res_chunk->start;
             else
             {
-                POSITION;
-                printf("Failed to insert into Allocated Chunks");
+                LOG_SYS(ERROR,"Failed to insert the free chunk (which was taken from free chunk list) into Allocated Chunks");
+                LOG(ERROR,ALLOC_ERR_MSG);
                 return NULL;
             }        
             
         }
     }
-    printf("Couldn't find any free chunks.");
-    POSITION;
+    LOG_SYS(ERROR,"Failed to find any free chunk. Either all available memory has been used or heap has severly fragmented.");
+    LOG(ERROR,ALLOC_ERR_MSG);
     return NULL;
 
 }
@@ -82,21 +91,21 @@ bool heap_free(void * ptr)
     HeapChunk remove_res=heap_chunk_remove(&Allocated_Heap_Chunks,ptr,-1);
     if(remove_res.start==NULL)
     {
-    printf("Failed to remove from Allocated chunks.\n");
-    POSITION;
+    LOG_SYS(ERROR,"Failed to remove the chunk from allocated chunk list.");
+    LOG(ERROR,DEALLOC_ERR_MSG);
     return false;
     }
     if(Freed_Heap_Chunks.len==HEAP_CHUNK_CAP)
     {
-        printf("Reached Freed chunk capacity.\n");
-        POSITION;
+        LOG_SYS(ERROR,"Free heap chunk lists capacity had been hit.");
+        LOG(ERROR,DEALLOC_ERR_MSG);
         return false;
     }
     void * insert_res=heap_chunk_insert(&Freed_Heap_Chunks,&remove_res);
     if(insert_res==NULL)
     {
-    printf("Insertion into Freed chunks failed.\n");
-    POSITION;
+    LOG_SYS(ERROR,"Failed to insert the freed chunk into freed chunk list.");
+    LOG(ERROR,DEALLOC_ERR_MSG);
     return false;
     }
     return true;

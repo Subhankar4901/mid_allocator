@@ -48,7 +48,7 @@ HeapChunk heap_chunk_remove(HeapChunk_List*list,void*ptr,int index)
     HeapChunk res={0};
     if(list->len==0)
     {
-    printf("Allocated chunks list is empty.\n");
+    LOG_SYS(ERROR,"Given list is empty.Couldn't remove chunk.");
     return res;
     }
     int idx;
@@ -58,8 +58,9 @@ HeapChunk heap_chunk_remove(HeapChunk_List*list,void*ptr,int index)
         idx=heap_chunk_query(list,ptr);
     if(idx==-1)
     {
-    printf("Chunk is not allocated.\n");
-    printf("Couldn't find %p location\n",ptr);
+    char buffer[70];
+    snprintf(buffer,sizeof(buffer),"Couldn't find %p location in chunk list.",ptr);
+    LOG_SYS(ERROR,(const char *)buffer);
     return res;
     }
     res=list->Heap_Chunks[idx];
