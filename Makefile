@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -ggdb
+CFLAGS=-Wall -ggdb -Wno-frame-address
 all:run
 #default
 run:main allocator utils
