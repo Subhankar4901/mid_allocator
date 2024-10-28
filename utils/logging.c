@@ -3,21 +3,39 @@
 #include<string.h>
 #include<syslog.h>
 #include "utils.h"
-char * LogLevelToString(LogLevel level)
+char * LogLevelToStringConsole(LogLevel level)
 {
     switch(level)
     {
         case INFO:
-        return "INFO";
+        return "\033[1;34m[INFO]\033[0m";
         break;
         case WARNING:
-        return "WARNING";
+        return "\033[1;33m[WARNING]\033[m";
         break;
         case ERROR:
-        return "ERROR";
+        return "\033[1;31m[ERROR]\033[0m";
         break;
         default:
         return "UNKNOWN";
+        break;
+    }
+}
+char * LogLevelToString(LogLevel level)
+{
+        switch(level)
+    {
+        case INFO:
+        return "[INFO]";
+        break;
+        case WARNING:
+        return "[WARNING]";
+        break;
+        case ERROR:
+        return "[ERROR]";
+        break;
+        default:
+        return "[UNKNOWN]";
         break;
     }
 }
@@ -26,9 +44,9 @@ void Log_Msg(LogLevel level,const char *msg,const char * file,int line){
     char * timestamp=ctime(&now);
     timestamp[strlen(timestamp)-1]='\0';
     if(level!=INFO)
-    printf("[%s] [%s] [%s:%d]: %s\n",LogLevelToString(level),timestamp,file,line,msg);
+    printf("%s [%s] [%s:%d]: %s\n",LogLevelToStringConsole(level),timestamp,file,line,msg);
     else
-    printf("[%s] [%s]: %s\n",LogLevelToString(level),timestamp,msg);
+    printf("%s [%s]: %s\n",LogLevelToStringConsole(level),timestamp,msg);
     if(level==ERROR || level==WARNING)
     printf("%s",CHECK_SYS_LOG_MSG);
     Log_Sys(level,msg,file,line);
@@ -50,8 +68,8 @@ void Log_Sys(LogLevel level,const char * msg,const char * file,int line){
     }
     openlog("mid_allocator",LOG_PID | LOG_CONS, LOG_USER);
     if(level==INFO)
-    syslog(pri,"[%s] : [%s]",LogLevelToString(level),msg);
+    syslog(pri,"%s : [%s]",LogLevelToString(level),msg);
     else
-    syslog(pri,"[%s] [%s:%d] : %s",LogLevelToString(level),file,line,msg);
+    syslog(pri,"%s [%s:%d] : %s",LogLevelToString(level),file,line,msg);
     closelog();
 }
