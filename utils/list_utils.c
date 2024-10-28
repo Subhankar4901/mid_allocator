@@ -1,13 +1,5 @@
 #include<stdio.h>
 #include "utils.h"
-void heap_chunk_dump(HeapChunk_List * list)
-{
-    printf("Chunks(%zu) :\n",list->len);
-     for(size_t i=0;i<list->len;i++)
-    {
-        printf("Chunk of Size : %zu is at location : %p\n",list->Heap_Chunks[i].size,list->Heap_Chunks[i].start);
-    }   
-}
 int heap_chunk_query(HeapChunk_List*list,void*ptr)
 {
     int lo=0;
@@ -19,16 +11,16 @@ int heap_chunk_query(HeapChunk_List*list,void*ptr)
 
         if(cur_chunk.start==ptr)
         return mid;
-        else if(cur_chunk.start<ptr)
+        else if((void*)cur_chunk.start<ptr)
         lo=mid+1;
         else
         hi=mid-1;
     }
     return -1;
 }
-void * heap_chunk_insert(HeapChunk_List*list,HeapChunk*ptr)
+void * heap_chunk_insert(HeapChunk_List*list,HeapChunk*ptr,size_t cap)
 {
-    if(list->len==HEAP_CHUNK_CAP)
+    if(list->len==cap)
       return NULL;
     list->Heap_Chunks[list->len]=*ptr;
     int cur_idx=(list->len);
@@ -44,7 +36,7 @@ void * heap_chunk_insert(HeapChunk_List*list,HeapChunk*ptr)
 
 }
 HeapChunk heap_chunk_remove(HeapChunk_List*list,void*ptr,int index)
-{
+{    
     HeapChunk res={0};
     if(list->len==0)
     {
