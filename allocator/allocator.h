@@ -1,11 +1,11 @@
 #ifndef ALLOCATOR_H
 #define ALLOCATOR_H
-#include<stdio.h>
-#include "../utils/utils.h"
-char Heap[HEAP_SIZE];
-HeapChunk_List Allocated_Heap_Chunks;
-HeapChunk_List Freed_Heap_Chunks;
-void init_allocator(void);
-void * heap_alloc(size_t size);
-bool heap_free(void * ptr);
+#include<stdbool.h>
+#include<stddef.h>
+void init_allocator(size_t memory_capacity_in_bytes);
+void * mid_alloc(size_t size);
+bool mid_free(void * ptr);
+void mid_collect();
+void allocated_mem_dump();
+void free_mem_dump();
 #endif
