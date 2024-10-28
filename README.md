@@ -1,4 +1,6 @@
-# mid_alloc
+# mid_alloc  
+![GitHub Release](https://img.shields.io/github/v/release/Subhankar4901/mid_allocator?link=https%3A%2F%2Fgithub.com%2FSubhankar4901%2Fmid_allocator%2Freleases%2Ftag%2Fv1.0.0)
+
 This project implements a simple custom memory allocator and a garbage collector in C, providing three primary functions for memory management: allocating memory on the heap, freeing allocated memory and garbage collection.
 <br>
 
